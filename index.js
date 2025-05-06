@@ -4,7 +4,7 @@ import * as readline from 'node:readline/promises';
 import { stdin as input, stdout as output, stderr } from 'node:process';
 import fs from 'node:fs';
 import path from 'node:path';
-import {createHash} from 'crypto';
+import {createHash} from 'node:crypto';
 import { getPath } from "./utils.js";
 import zlib from "node:zlib"
 import { pipeline } from 'node:stream/promises'
@@ -25,7 +25,16 @@ console.log(`You are currently in ${currDir}`)
 
 rl.on('line',async (i) => {
     const input = i.trim()
-
+    const { values, positionals } = parseArgs(
+        {
+            options:{
+                username: {type:'string'},
+                password: {type:'string'},
+            }
+        }
+    );
+    console.log(values)
+    console.log(positionals)
     if(input === '.exit') {process.exit(0);}
     else if ((input === 'up') && (currDir !== homeDir)) {
         const root = path.parse(currDir).root;
@@ -35,7 +44,8 @@ rl.on('line',async (i) => {
     }
     else if (input.startsWith('cd ')) {
         const targetDir = input.split(' ')[1].trim()
-        const currDir = getPath(currDir, '..')
+         currDir = getPath(targetDir, '..')
+
     }
     else if (input.startsWith('add ')) {
         const fileName = input.split(' ')[1].trim()
